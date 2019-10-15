@@ -277,63 +277,6 @@ ggplot(plot_data, aes(x=as.IDate(message_date), y= daily_msgs)) +
 
 ![](slack_files/figure-gfm/unnamed-chunk-4-4.png)<!-- -->
 
-``` r
-all_msgs_2019[, list(channel_id, user_id, message_timestamp)]
-```
-
-    ##       channel_id   user_id message_timestamp
-    ##    1:  C5SQ1Q1UH U191LC7S4        1551413778
-    ##    2:  C1E873E2E U191LC7S4        1552603286
-    ##    3:  C1924SRPG U4ELUPRDY        1551341629
-    ##    4:  CGQREKSBG U4TE2KTPF        1552355687
-    ##    5:  C1NDAKX39 U4TE2KTPF        1549927629
-    ##   ---                                       
-    ## 1799:  C1924SRPG U18TT99MY        1550800142
-    ## 1800:  C1924SRPG U9U7AC9QA        1551249299
-    ## 1801:  C18SWDACD U18TT99MY        1551955578
-    ## 1802:  C1924SRPG U18TT99MY        1550799158
-    ## 1803:  C1CHS0P45 U4TE2KTPF        1552891100
-
-``` r
-all_msgs_2019[, .(msg_count = .N, user_count = uniqueN(user_id)), by = channel_id]
-```
-
-    ##     channel_id msg_count user_count
-    ##  1:  C5SQ1Q1UH        32          3
-    ##  2:  C1E873E2E        53         10
-    ##  3:  C1924SRPG       525         19
-    ##  4:  CGQREKSBG       217         14
-    ##  5:  C1NDAKX39       138         10
-    ##  6:  C1CHS0P45        38          9
-    ##  7:  C6HMFCW9K        84          1
-    ##  8:  CGV3RUZ2S        22          6
-    ##  9:  CH96CFF8E        22          3
-    ## 10:  C192CUEH5       203         14
-    ## 11:  CGRPA1FQS         9          6
-    ## 12:  C18SWDACD       155         36
-    ## 13:  C1ATW6P99        14          5
-    ## 14:  CGV3BFTC1        17          3
-    ## 15:  CGCFSE3FD        29         12
-    ## 16:  C2L4ZHVHQ        12          2
-    ## 17:  C1U4T4GCR        44         16
-    ## 18:  C6YT8EK9S        31          2
-    ## 19:  CGQ64P9QS        51         10
-    ## 20:  CH8QYP7UP        10          6
-    ## 21:  CH36QTYDA        22          4
-    ## 22:  CGUV9MGUQ        18          7
-    ## 23:  C1AR0J1K6        20          9
-    ## 24:  C4H18MG0K         8          5
-    ## 25:  C4P5NMR0D         6          5
-    ## 26:  CD9BZBBDL         3          3
-    ## 27:  C191P7JE6         5          5
-    ## 28:  C5D6KT798         2          2
-    ## 29:  C192JHDND         5          2
-    ## 30:  C2E3KFE6P         1          1
-    ## 31:  C4RLFGL73         4          2
-    ## 32:  CC9564N68         2          2
-    ## 33:  CDYTCTC0N         1          1
-    ##     channel_id msg_count user_count
-
 ## Data Analysis in Python
 
 ``` python
@@ -358,11 +301,6 @@ plt.show()
 ``` python
 all_msgs_2019_df["channel_name"].value_counts().nlargest(10).plot.bar()
 plt.tight_layout()
-```
-
-    ## /Users/anuj/.virtualenvs/cs_proj/bin/python:1: UserWarning: Tight layout not applied. The bottom and top margins cannot be made large enough to accommodate all axes decorations.
-
-``` python
 plt.show()
 
 # Details by channel (message count and unique users count)
@@ -389,17 +327,98 @@ channel_details_df.head()
 channel_details_dt <- py$channel_details_df
 setDT(channel_details_dt)
 
-channel_details_dt[order(-msg_count)][1:10]
+channel_details_dt[order(user_count,msg_count)][1:10]
 ```
 
-    ##              channel_name msg_count user_count
-    ##  1:                 dev_r       525         19
-    ##  2: mdsi_deeplearn_aut_19       217         14
-    ##  3:            dev_python       203         14
-    ##  4:    mdsi_announcements       155         36
-    ##  5:  dev_machine_learning       138         10
-    ##  6:      36100decepticons        84          1
-    ##  7:               ds_jobs        53         10
-    ##  8:       mdsi_dam_aut_19        51          9
-    ##  9:        mdsi_electives        44         16
-    ## 10:          dev_data_vis        38          9
+    ##            channel_name msg_count user_count
+    ##  1:          free-stuff         1          1
+    ##  2:          oth_humour         1          1
+    ##  3:    36100decepticons        84          1
+    ##  4:  events-of-interest         2          2
+    ##  5:          oth_random         2          2
+    ##  6: mdsi_cicaround_help         4          2
+    ##  7:       ds_hackathons         5          2
+    ##  8:        dev_datasets        12          2
+    ##  9:     fliparound_chat        31          2
+    ## 10:      ds_data_ethics         3          3
+
+``` r
+all_msgs_2019[channel_name == '36100decepticons', list(user_id, message_text)][1:10]
+```
+
+    ##       user_id          message_text
+    ##  1: USLACKBOT Reminder: write data.
+    ##  2: USLACKBOT Reminder: write data.
+    ##  3: USLACKBOT Reminder: write data.
+    ##  4: USLACKBOT Reminder: write data.
+    ##  5: USLACKBOT Reminder: write data.
+    ##  6: USLACKBOT Reminder: write data.
+    ##  7: USLACKBOT Reminder: write data.
+    ##  8: USLACKBOT Reminder: write data.
+    ##  9: USLACKBOT Reminder: write data.
+    ## 10: USLACKBOT Reminder: write data.
+
+``` r
+all_msgs_2019[order(-message_reply_count)]
+```
+
+    ##       channel_id   user_id
+    ##    1:  C18SWDACD U191LC7S4
+    ##    2:  CGQREKSBG U4JJKPSNR
+    ##    3:  C1924SRPG U18TT99MY
+    ##    4:  C1CHS0P45 U191LC7S4
+    ##    5:  C1NDAKX39 U4TE2KTPF
+    ##   ---                     
+    ## 1799:  C1924SRPG U18TT99MY
+    ## 1800:  C1924SRPG U9U7AC9QA
+    ## 1801:  C18SWDACD U18TT99MY
+    ## 1802:  C1924SRPG U18TT99MY
+    ## 1803:  C1CHS0P45 U4TE2KTPF
+    ##                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           message_text
+    ##    1:                                                                                                                                                                                                                                                                                                                                                                             Just so all the newbies know. Since you can create custom emojis in slack, you can also 'Andrew ng' a comment and 'Perry' a comment. Over time you will learn where such things are appropriate and how useful they are (very.). :) 
+    ##    2:                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 
+    ##    3:                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      testability, being able to treat functions like objects, optimisations, etc
+    ##    4: If anyone was considering signing up to tableau for business uses or anything beyond your free student license I would personally recommend not doing so. Have had horrible, delayed, rude and completely ineffective support over the last few weeks. Their solution has simply been 'yeah we can only help if you renew now so pay us 840usd again'. Which isn't a solution... That's just asking to (pay to) be a new customer... \n\nThese days they are just not worth it compared to tools like powerBI which I originally didn't look at but am now quite bullish on.\n\nRant over. Pretty disappointed. 
+    ##    5:                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              but we can compare a model with human if the outcome is categorical
+    ##   ---                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 
+    ## 1799:                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   yeah there must be some field where it matters
+    ## 1800:                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         TPI file
+    ## 1801:                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 Lol I know you have a suit photo I’m sure I’ve seen it somewhere
+    ## 1802:                                                                                                                                                                                                                                                                                                                                                                                                                                                    I’ll comment on my thoughts as I go - someone the other day made a comment about teaching people to fish, so I’ll try and keep track of how I track this down
+    ## 1803:                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             yes, i agreed with alex: vague term so anybody can put a claim to it
+    ##       message_timestamp message_attachment_count message_reply_count
+    ##    1:        1551954566                        0                  38
+    ##    2:        1553081852                        0                  38
+    ##    3:        1552806694                        0                  33
+    ##    4:        1552880075                        0                  27
+    ##    5:        1551930709                        0                  20
+    ##   ---                                                               
+    ## 1799:        1550800142                        0                   0
+    ## 1800:        1551249299                        0                   0
+    ## 1801:        1551955578                        0                   0
+    ## 1802:        1550799158                        0                   0
+    ## 1803:        1552891100                        0                   0
+    ##                channel_name channel_is_archived        user_name
+    ##    1:    mdsi_announcements                   0     Alex Scriven
+    ##    2: mdsi_deeplearn_aut_19                   0             elly
+    ##    3:                 dev_r                   0 Perry Stephenson
+    ##    4:          dev_data_vis                   0     Alex Scriven
+    ##    5:  dev_machine_learning                   0     Jason Nguyen
+    ##   ---                                                           
+    ## 1799:                 dev_r                   0 Perry Stephenson
+    ## 1800:                 dev_r                   0       Justin Mah
+    ## 1801:    mdsi_announcements                   0 Perry Stephenson
+    ## 1802:                 dev_r                   0 Perry Stephenson
+    ## 1803:          dev_data_vis                   0     Jason Nguyen
+    ##       user_is_bot message_date       week
+    ##    1:           0   2019-03-07 2019-03-04
+    ##    2:           0   2019-03-20 2019-03-18
+    ##    3:           0   2019-03-17 2019-03-11
+    ##    4:           0   2019-03-18 2019-03-18
+    ##    5:           0   2019-03-07 2019-03-04
+    ##   ---                                    
+    ## 1799:           0   2019-02-22 2019-02-18
+    ## 1800:           0   2019-02-27 2019-02-25
+    ## 1801:           0   2019-03-07 2019-03-04
+    ## 1802:           0   2019-02-22 2019-02-18
+    ## 1803:           0   2019-03-18 2019-03-18

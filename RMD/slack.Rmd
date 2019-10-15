@@ -209,15 +209,12 @@ ggplot(plot_data, aes(x=as.IDate(message_date), y= daily_msgs)) +
   theme(panel.background = element_blank(), axis.line = element_line(colour = "grey"), plot.title = element_text(hjust = 0.5))+
   labs(x = 'Date', y = 'Number of Messages') +
   ggtitle("Daily Messages")
-
-all_msgs_2019[, list(channel_id, user_id, message_timestamp)]
-all_msgs_2019[, .(msg_count = .N, user_count = uniqueN(user_id)), by = channel_id]
 ```
 
 
 ## Data Analysis in Python
 
-```{python message=FALSE}
+```{python message=FALSE, fig.height=15, fig.width=15}
 import pandas as pd
 import matplotlib.pyplot as plt
 
@@ -251,6 +248,6 @@ channel_details_dt <- py$channel_details_df
 setDT(channel_details_dt)
 
 channel_details_dt[order(user_count,msg_count)][1:10]
-all_msgs_2019[channel_name == 'free-stuff']
+all_msgs_2019[channel_name == '36100decepticons', list(user_id, message_text)][1:10]
 all_msgs_2019[order(-message_reply_count)]
 ```
