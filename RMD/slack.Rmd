@@ -8,7 +8,7 @@ output:
 
 ```{r setup_r,  include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
-knitr::opts_chunk$set(engine.path = '/Users/anuj/anaconda3/bin/python')
+#knitr::opts_chunk$set(engine.path = '/Users/anuj/anaconda3/bin/python')
 knitr::opts_chunk$set(dpi=300)
 library(data.table)
 library(lubridate)
@@ -170,6 +170,7 @@ dbDisconnect(slackdb)
 
 # 90 days active users and messages counts
 setDT(all_msgs_2019)
+all_msgs_2019[, .(msg_count = .N, user_count = uniqueN(user_id)), by = channel_id]
 
 all_msgs_2019[, message_date:= as.IDate(as.POSIXct(message_timestamp,origin="1970-01-01",tz="UTC"))]
 
@@ -208,26 +209,48 @@ ggplot(plot_data, aes(x=as.IDate(message_date), y= daily_msgs)) +
   theme(panel.background = element_blank(), axis.line = element_line(colour = "grey"), plot.title = element_text(hjust = 0.5))+
   labs(x = 'Date', y = 'Number of Messages') +
   ggtitle("Daily Messages")
+
+all_msgs_2019[, list(channel_id, user_id, message_timestamp)]
+all_msgs_2019[, .(msg_count = .N, user_count = uniqueN(user_id)), by = channel_id]
 ```
 
 
 ## Data Analysis in Python
 
-```{python message=FALSE, warning=FALSE}
+```{python message=FALSE}
 import pandas as pd
 import matplotlib.pyplot as plt
 
-# Data Frame
-all_msgs_2019 = pd.DataFrame(r.all_msgs_2019)
 
+
+# Data Frame
+all_msgs_2019_df = pd.DataFrame(r.all_msgs_2019)
 
 # Top 10 Users - 90 days
-all_msgs_2019[all_msgs_2019["user_name"] != 'NA']["user_name"].value_counts().nlargest(10).plot.bar()
+all_msgs_2019_df[all_msgs_2019_df["user_name"] != 'NA']["user_name"].value_counts().nlargest(10).plot.bar()
 plt.tight_layout()
 plt.show()
 
 # Top 10 Channels - 90 days
-all_msgs_2019["channel_name"].value_counts().nlargest(10).plot.bar()
+all_msgs_2019_df["channel_name"].value_counts().nlargest(10).plot.bar()
 plt.tight_layout()
 plt.show()
+
+# Details by channel (message count and unique users count)
+channel_details_df = all_msgs_2019_df.groupby(by='channel_name', as_index=False)["user_name"].agg({'msg_count': pd.Series.count, 'user_count': pd.Series.nunique})
+
+channel_details_df.head()
+
+```
+
+## Data Analysis in R
+
+```{r message=FALSE, warning=FALSE}
+
+channel_details_dt <- py$channel_details_df
+setDT(channel_details_dt)
+
+channel_details_dt[order(user_count,msg_count)][1:10]
+all_msgs_2019[channel_name == 'free-stuff']
+all_msgs_2019[order(-message_reply_count)]
 ```

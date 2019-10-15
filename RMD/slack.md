@@ -184,7 +184,46 @@ dbDisconnect(slackdb)
 
 # 90 days active users and messages counts
 setDT(all_msgs_2019)
+all_msgs_2019[, .(msg_count = .N, user_count = uniqueN(user_id)), by = channel_id]
+```
 
+    ##     channel_id msg_count user_count
+    ##  1:  C5SQ1Q1UH        32          3
+    ##  2:  C1E873E2E        53         10
+    ##  3:  C1924SRPG       525         19
+    ##  4:  CGQREKSBG       217         14
+    ##  5:  C1NDAKX39       138         10
+    ##  6:  C1CHS0P45        38          9
+    ##  7:  C6HMFCW9K        84          1
+    ##  8:  CGV3RUZ2S        22          6
+    ##  9:  CH96CFF8E        22          3
+    ## 10:  C192CUEH5       203         14
+    ## 11:  CGRPA1FQS         9          6
+    ## 12:  C18SWDACD       155         36
+    ## 13:  C1ATW6P99        14          5
+    ## 14:  CGV3BFTC1        17          3
+    ## 15:  CGCFSE3FD        29         12
+    ## 16:  C2L4ZHVHQ        12          2
+    ## 17:  C1U4T4GCR        44         16
+    ## 18:  C6YT8EK9S        31          2
+    ## 19:  CGQ64P9QS        51         10
+    ## 20:  CH8QYP7UP        10          6
+    ## 21:  CH36QTYDA        22          4
+    ## 22:  CGUV9MGUQ        18          7
+    ## 23:  C1AR0J1K6        20          9
+    ## 24:  C4H18MG0K         8          5
+    ## 25:  C4P5NMR0D         6          5
+    ## 26:  CD9BZBBDL         3          3
+    ## 27:  C191P7JE6         5          5
+    ## 28:  C5D6KT798         2          2
+    ## 29:  C192JHDND         5          2
+    ## 30:  C2E3KFE6P         1          1
+    ## 31:  C4RLFGL73         4          2
+    ## 32:  CC9564N68         2          2
+    ## 33:  CDYTCTC0N         1          1
+    ##     channel_id msg_count user_count
+
+``` r
 all_msgs_2019[, message_date:= as.IDate(as.POSIXct(message_timestamp,origin="1970-01-01",tz="UTC"))]
 
 all_msgs_2019[, week:= cut.Date(message_date, breaks="week")]
@@ -238,18 +277,76 @@ ggplot(plot_data, aes(x=as.IDate(message_date), y= daily_msgs)) +
 
 ![](slack_files/figure-gfm/unnamed-chunk-4-4.png)<!-- -->
 
+``` r
+all_msgs_2019[, list(channel_id, user_id, message_timestamp)]
+```
+
+    ##       channel_id   user_id message_timestamp
+    ##    1:  C5SQ1Q1UH U191LC7S4        1551413778
+    ##    2:  C1E873E2E U191LC7S4        1552603286
+    ##    3:  C1924SRPG U4ELUPRDY        1551341629
+    ##    4:  CGQREKSBG U4TE2KTPF        1552355687
+    ##    5:  C1NDAKX39 U4TE2KTPF        1549927629
+    ##   ---                                       
+    ## 1799:  C1924SRPG U18TT99MY        1550800142
+    ## 1800:  C1924SRPG U9U7AC9QA        1551249299
+    ## 1801:  C18SWDACD U18TT99MY        1551955578
+    ## 1802:  C1924SRPG U18TT99MY        1550799158
+    ## 1803:  C1CHS0P45 U4TE2KTPF        1552891100
+
+``` r
+all_msgs_2019[, .(msg_count = .N, user_count = uniqueN(user_id)), by = channel_id]
+```
+
+    ##     channel_id msg_count user_count
+    ##  1:  C5SQ1Q1UH        32          3
+    ##  2:  C1E873E2E        53         10
+    ##  3:  C1924SRPG       525         19
+    ##  4:  CGQREKSBG       217         14
+    ##  5:  C1NDAKX39       138         10
+    ##  6:  C1CHS0P45        38          9
+    ##  7:  C6HMFCW9K        84          1
+    ##  8:  CGV3RUZ2S        22          6
+    ##  9:  CH96CFF8E        22          3
+    ## 10:  C192CUEH5       203         14
+    ## 11:  CGRPA1FQS         9          6
+    ## 12:  C18SWDACD       155         36
+    ## 13:  C1ATW6P99        14          5
+    ## 14:  CGV3BFTC1        17          3
+    ## 15:  CGCFSE3FD        29         12
+    ## 16:  C2L4ZHVHQ        12          2
+    ## 17:  C1U4T4GCR        44         16
+    ## 18:  C6YT8EK9S        31          2
+    ## 19:  CGQ64P9QS        51         10
+    ## 20:  CH8QYP7UP        10          6
+    ## 21:  CH36QTYDA        22          4
+    ## 22:  CGUV9MGUQ        18          7
+    ## 23:  C1AR0J1K6        20          9
+    ## 24:  C4H18MG0K         8          5
+    ## 25:  C4P5NMR0D         6          5
+    ## 26:  CD9BZBBDL         3          3
+    ## 27:  C191P7JE6         5          5
+    ## 28:  C5D6KT798         2          2
+    ## 29:  C192JHDND         5          2
+    ## 30:  C2E3KFE6P         1          1
+    ## 31:  C4RLFGL73         4          2
+    ## 32:  CC9564N68         2          2
+    ## 33:  CDYTCTC0N         1          1
+    ##     channel_id msg_count user_count
+
 ## Data Analysis in Python
 
 ``` python
 import pandas as pd
 import matplotlib.pyplot as plt
 
-# Data Frame
-all_msgs_2019 = pd.DataFrame(r.all_msgs_2019)
 
+
+# Data Frame
+all_msgs_2019_df = pd.DataFrame(r.all_msgs_2019)
 
 # Top 10 Users - 90 days
-all_msgs_2019[all_msgs_2019["user_name"] != 'NA']["user_name"].value_counts().nlargest(10).plot.bar()
+all_msgs_2019_df[all_msgs_2019_df["user_name"] != 'NA']["user_name"].value_counts().nlargest(10).plot.bar()
 plt.tight_layout()
 plt.show()
 
@@ -259,14 +356,50 @@ plt.show()
 ![](slack_files/figure-gfm/unnamed-chunk-5-1.png)<!-- -->
 
 ``` python
-all_msgs_2019["channel_name"].value_counts().nlargest(10).plot.bar()
+all_msgs_2019_df["channel_name"].value_counts().nlargest(10).plot.bar()
 plt.tight_layout()
 ```
 
-    ## /Users/anuj/anaconda3/bin/python:1: UserWarning: Tight layout not applied. The bottom and top margins cannot be made large enough to accommodate all axes decorations.
+    ## /Users/anuj/.virtualenvs/cs_proj/bin/python:1: UserWarning: Tight layout not applied. The bottom and top margins cannot be made large enough to accommodate all axes decorations.
 
 ``` python
 plt.show()
+
+# Details by channel (message count and unique users count)
 ```
 
 ![](slack_files/figure-gfm/unnamed-chunk-5-2.png)<!-- -->
+
+``` python
+channel_details_df = all_msgs_2019_df.groupby(by='channel_name', as_index=False)["user_name"].agg({'msg_count': pd.Series.count, 'user_count': pd.Series.nunique})
+
+channel_details_df.head()
+```
+
+    ##            channel_name  msg_count  user_count
+    ## 0      36100decepticons         84           1
+    ## 1               avacado         22           4
+    ## 2          dev_data_vis         38           9
+    ## 3          dev_datasets         12           2
+    ## 4  dev_machine_learning        138          10
+
+## Data Analysis in R
+
+``` r
+channel_details_dt <- py$channel_details_df
+setDT(channel_details_dt)
+
+channel_details_dt[order(-msg_count)][1:10]
+```
+
+    ##              channel_name msg_count user_count
+    ##  1:                 dev_r       525         19
+    ##  2: mdsi_deeplearn_aut_19       217         14
+    ##  3:            dev_python       203         14
+    ##  4:    mdsi_announcements       155         36
+    ##  5:  dev_machine_learning       138         10
+    ##  6:      36100decepticons        84          1
+    ##  7:               ds_jobs        53         10
+    ##  8:       mdsi_dam_aut_19        51          9
+    ##  9:        mdsi_electives        44         16
+    ## 10:          dev_data_vis        38          9
