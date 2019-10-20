@@ -395,10 +395,6 @@ plt.show()
 all_msgs_2019_df["channel_name"].value_counts().nlargest(10).plot.bar()
 plt.rcParams.update({'font.size': 20})
 plt.tight_layout()
-```
-
-
-``` python
 plt.show()
 ```
 
