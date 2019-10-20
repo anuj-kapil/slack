@@ -291,6 +291,79 @@ ggplot(plot_data, aes(x = as.IDate(message_date), y = daily_msgs)) +
 
 ![](slack_files/figure-gfm/unnamed-chunk-5-4.png)<!-- -->
 
+The weekly charts show that the message activities start to grow
+significantly in March and this is usually when the Autumn session of
+MDSI starts. The users become really active from March onwards although
+there is some activity in February and very less in January. Usually,
+the activity before the semester starts, is about electives discussions
+and from March onwards the discussions are more about the subjects which
+are running in Autumn session. As shown in the top 10 channels below,
+the ‘mdsi\_electives’ channel gets dropped in Feb and March’s top 10
+list as there is not much activity in that channel once the semester
+starts. Also, the ‘mdsi\_deeplearn\_aut\_19’ is the most active channel
+in March since that was a running subject in Autumn 2019 session. A good
+use of this information, combined with text analytics on the messages,
+could be to gauge the interest of students about the electives (from
+pre-session commencement period) to better plan the electives schedule.
+This will result in better servicing of the electives from the
+management, the teaching staff and students’ perspective and can also
+help in measuring the revenue estimates. Another use of this information
+could be that if an important announcement (for example in
+‘mdsi\_announcement’ channel) needs to be made, March (in this sample
+data) would be the ideal time to make that announcement for it to reach
+maximum users/for maximum users to respond to that announcement.
+
+``` r
+# Jan top 10 channels
+all_msgs_2019[message_date <= as.IDate('2019-01-31'),.N, by = channel_name][order(-N)][1:10]
+```
+
+    ##             channel_name  N
+    ##  1:   mdsi_announcements 36
+    ##  2: dev_machine_learning 34
+    ##  3:     36100decepticons 31
+    ##  4:      fliparound_chat 31
+    ##  5:       mdsi_electives 24
+    ##  6:                dev_r 22
+    ##  7:           dev_python 15
+    ##  8:         dev_data_vis  5
+    ##  9:        ds_hackathons  4
+    ## 10:        ds_cool_stuff  3
+
+``` r
+# Feb top 10 channels
+all_msgs_2019[message_date %between% c(as.IDate('2019-01-31'), as.IDate('2019-02-28')),.N, by = channel_name][order(-N)][1:10]
+```
+
+    ##              channel_name   N
+    ##  1:                 dev_r 288
+    ##  2:            dev_python  46
+    ##  3:    mdsi_announcements  42
+    ##  4:  dev_machine_learning  37
+    ##  5:       fliparound_chat  31
+    ##  6:      36100decepticons  29
+    ##  7:               ds_jobs  26
+    ##  8: mdsi_deeplearn_spr_17  24
+    ##  9:    mdsi_course_review  16
+    ## 10:         ds_cool_stuff  11
+
+``` r
+# March top 10 channels
+all_msgs_2019[message_date >= as.IDate('2019-03-01'),.N, by = channel_name][order(-N)][1:10]
+```
+
+    ##              channel_name   N
+    ##  1: mdsi_deeplearn_aut_19 217
+    ##  2:                 dev_r 215
+    ##  3:            dev_python 142
+    ##  4:    mdsi_announcements  77
+    ##  5:  dev_machine_learning  67
+    ##  6:       mdsi_dam_aut_19  51
+    ##  7:          dev_data_vis  32
+    ##  8:               ds_jobs  27
+    ##  9:      36100decepticons  25
+    ## 10:       mdsi_dvn_aut_19  22
+
 ## Data Analysis in Python
 
 The same dataset that we created in R chunk, can be accessed in the
@@ -317,7 +390,7 @@ plt.show()
 # Top 10 Channels - 90 days
 ```
 
-![](slack_files/figure-gfm/unnamed-chunk-6-1.png)<!-- -->
+![](slack_files/figure-gfm/unnamed-chunk-7-1.png)<!-- -->
 
 ``` python
 all_msgs_2019_df["channel_name"].value_counts().nlargest(10).plot.bar()
@@ -333,7 +406,7 @@ plt.show()
 # Details by channel (message count and unique users count)
 ```
 
-![](slack_files/figure-gfm/unnamed-chunk-6-2.png)<!-- -->
+![](slack_files/figure-gfm/unnamed-chunk-7-2.png)<!-- -->
 
 ``` python
 channel_details_df = all_msgs_2019_df.groupby(by='channel_name', as_index=False)["user_name"].agg({'msg_count': pd.Series.count, 'user_count': pd.Series.nunique})

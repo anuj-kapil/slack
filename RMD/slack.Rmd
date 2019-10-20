@@ -220,6 +220,19 @@ ggplot(plot_data, aes(x = as.IDate(message_date), y = daily_msgs)) +
   ggtitle("Daily Messages")
 ```
 
+The weekly charts show that the message activities start to grow significantly in March and this is usually when the Autumn session of MDSI starts. The users become really active from March onwards although there is some activity in February and very less in January. Usually, the activity before the semester starts, is about electives discussions and from March onwards the discussions are more about the subjects which are running in Autumn session. As shown in the top 10 channels below, the ‘mdsi_electives’ channel gets dropped in Feb and March’s top 10 list as there is not much activity in that channel once the semester starts. Also, the ‘mdsi_deeplearn_aut_19’ is the most active channel in March since that was a running subject in Autumn 2019 session. A good use of this information, combined with text analytics on the messages, could be to gauge the interest of students about the electives (from pre-session commencement period) to better plan the electives schedule. This will result in better servicing of the electives from the management, the teaching staff and students’ perspective and can also help in measuring the revenue estimates. Another use of this information could be that if an important announcement (for example in ‘mdsi_announcement’ channel) needs to be made, March (in this sample data) would be the ideal time to make that announcement for it to reach maximum users/for maximum users to respond to that announcement.
+
+```{r message=FALSE, warning=FALSE}
+# Jan top 10 channels
+all_msgs_2019[message_date <= as.IDate('2019-01-31'),.N, by = channel_name][order(-N)][1:10]
+
+# Feb top 10 channels
+all_msgs_2019[message_date %between% c(as.IDate('2019-01-31'), as.IDate('2019-02-28')),.N, by = channel_name][order(-N)][1:10]
+
+# March top 10 channels
+all_msgs_2019[message_date >= as.IDate('2019-03-01'),.N, by = channel_name][order(-N)][1:10]
+```
+
 
 ## Data Analysis in Python
 The same dataset that we created in R chunk, can be accessed in the Python enironment using the 'r' object. Here we have created a **pandas** dataframe from 'r' datatable. In the example below we are trying to find the top 10 active users (excluding the bots) & channels. Alternatively, we can look at the top 10 inactive users & channels. We can even combine the two counts to look at the number of messages and users in any channel.
