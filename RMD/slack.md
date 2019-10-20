@@ -386,29 +386,22 @@ all_msgs_2019_df[all_msgs_2019_df["user_is_bot"] == 0]["user_name"].value_counts
 plt.rcParams.update({'font.size': 20})
 plt.tight_layout()
 plt.show()
-
-# Top 10 Channels - 90 days
 ```
 
 ![](slack_files/figure-gfm/unnamed-chunk-7-1.png)<!-- -->
 
 ``` python
+# Top 10 Channels - 90 days
 all_msgs_2019_df["channel_name"].value_counts().nlargest(10).plot.bar()
 plt.rcParams.update({'font.size': 20})
 plt.tight_layout()
-```
-
-    ## /Users/anuj/.virtualenvs/cs_proj/bin/python:1: UserWarning: Tight layout not applied. The bottom and top margins cannot be made large enough to accommodate all axes decorations.
-
-``` python
 plt.show()
-
-# Details by channel (message count and unique users count)
 ```
 
 ![](slack_files/figure-gfm/unnamed-chunk-7-2.png)<!-- -->
 
 ``` python
+# Details by channel (message count and unique users count)
 channel_details_df = all_msgs_2019_df.groupby(by='channel_name', as_index=False)["user_name"].agg({'msg_count': pd.Series.count, 'user_count': pd.Series.nunique})
 
 channel_details_df.sort_values(by=['msg_count'], ascending=False).head()
